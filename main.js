@@ -194,7 +194,19 @@ const DUPLICATE = '&#x32;&#xFE0F;&#x20E3;';
 
 const main = () => {
   let table = $('#the-table');
-  let context = generate();
+  let ignore_storage = localStorage['guessed-at'] != new Date().toDateString();
+  let context = null;
+  if (!ignore_storage) {
+    try {
+      context = JSON.parse(localStorage['context']);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  if (!context) {
+    context = generate();
+    localStorage['context'] = JSON.stringify(context);
+  }
 
   context.patterns.forEach((pattern, idx, list) => {
     let answer = context.answers[idx];
@@ -210,7 +222,6 @@ const main = () => {
     }   
     table.innerHTML += tr + '</tr>';
   });
-  let ignore_storage = localStorage['guessed-at'] != new Date().toDateString();
   $$('.guess-field').forEach(field => {
     let idx = field.dataset.idx;
     let stored = localStorage['guess-' + idx];
