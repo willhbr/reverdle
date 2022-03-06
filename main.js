@@ -112,8 +112,6 @@ const generate = (target) => {
   let guess = ''
   let g = '';
   let patterns = [];
-  console.log('Target:', target);
-  console.log('Words:', words.length);
 
   let i = 0;
   while (g != '22222') {
@@ -122,19 +120,13 @@ const generate = (target) => {
       break;
     }
     words = possible_words(knowledge, words);
-    console.log(words.length, 'possible words');
-    // console.log(words.join(', '))
     guess = words.splice(random(words.length), 1)[0];
-    console.log('Guessing:', guess);
     if (!guess) {
-      console.log(knowledge);
       throw "oh no it failed";
     }
     g = grade(guess, target);
-    console.log('Score: ', g);
     patterns.push(g);
     knowledge = update_knowledge(knowledge, guess, g);
-    console.log(Array.from(knowledge.banned_letters).join(", "))
   }
 
   return ({
