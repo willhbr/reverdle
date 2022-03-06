@@ -138,7 +138,7 @@ const generate = (target) => {
 const check_input = (target, field) => {
   let idx = field.dataset.idx;
   let pattern = field.dataset.pattern;
-  let word = field.value;
+  let word = field.value.toLowerCase();
   let result_field = $('#result-' + idx);
   localStorage['guess-' + idx] = word;
   localStorage['guessed-at'] = new Date().toDateString();
@@ -154,7 +154,7 @@ const check_input = (target, field) => {
     field.classList.remove('duplicate');
     result_field.innerHTML = QNS + BAD_WORD;
   } else if (Array.from(
-    $$('.guess-field')).map(f => f.dataset.idx == idx ? '' : f.value).includes(word)) {
+    $$('.guess-field')).map(f => f.dataset.idx == idx ? '' : f.value.toLowerCase()).includes(word)) {
     $$('.guess-field').forEach(f => {
       if (f.value == word && f.dataset.idx != idx) {
         $('#result-' + f.dataset.idx).innerHTML = QNS + DUPLICATE;
