@@ -41,6 +41,7 @@ input {
   height: 1.2rem;
   color: #eee;
   text-align: center;
+  width: 5em !important;
 }
 
 td.word {
