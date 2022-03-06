@@ -112,11 +112,12 @@ const generate = (target) => {
   let guess = ''
   let g = '';
   let patterns = [];
+  let answers = [];
 
   let i = 0;
   while (g != '22222') {
     i += 1;
-    if (i > 100) {
+    if (i > 8) {
       break;
     }
     words = possible_words(knowledge, words);
@@ -126,12 +127,14 @@ const generate = (target) => {
     }
     g = grade(guess, target);
     patterns.push(g);
+    answers.push(guess);
     knowledge = update_knowledge(knowledge, guess, g);
   }
 
   return ({
     patterns: patterns,
     target: target,
+    answers: answers,
   });
 };
 
@@ -194,12 +197,14 @@ const main = () => {
   let context = generate();
 
   context.patterns.forEach((pattern, idx, list) => {
+    let answer = context.answers[idx];
     let emojis = emojify(pattern);
     let tr = `<tr><td class="emo">${emojis}</td>`;
     if (idx == list.length - 1) {
       tr += `<td class="word">${context.target}</td>`;
     } else {
       tr += `<td class="input"><input type="text" class="guess-field"
+                  data-answer="${answer}"
                   data-idx="${idx}" data-pattern="${pattern}"/></td>`;
       tr += `<td class="result" id="result-${idx}">${QNS}&#x2754;</td>`
     }   

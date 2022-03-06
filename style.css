@@ -42,6 +42,7 @@ input {
   color: #eee;
   text-align: center;
   width: 5em !important;
+  text-transform: uppercase !important;
 }
 
 td.word {
