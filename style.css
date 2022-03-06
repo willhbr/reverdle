@@ -1,0 +1,72 @@
+body {
+  color: #eee;
+  font-family: sans-serif;
+  background: #2b2b2b;
+}
+
+h1 {
+  text-align: center;
+  transform: scale(-1, 1);
+}
+
+p.subtitle {
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+  width: 100%;
+}
+
+.container {
+  margin: auto;
+  max-width: 500px;
+}
+
+#the-table {
+  width: 100%;
+  font-size: 20px;
+}
+
+td.emo {
+  text-align: right;
+}
+
+#the-table td {
+  text-transform: uppercase;
+}
+
+input {
+  background: transparent;
+  border: 1px solid #eee;
+  border-radius: 2px;
+  height: 1.2rem;
+  color: #eee;
+  text-align: center;
+}
+
+td.word {
+  text-align: center;
+}
+
+td.input {
+  text-align: center;
+}
+
+input.correct {
+  color: #eee;
+  border-color: green;
+}
+
+input.incorrect {
+  border-color: tomato;
+}
+
+input.bad-word {
+  border-color: orange;
+}
+
+footer, footer a {
+  margin-top: 20vh;
+  color: #aaa !important;
+  text-decoration: none;
+  text-align: center;
+}
