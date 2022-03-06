@@ -85,14 +85,21 @@ const grade = (word, target) => {
 
 const word_matches = (pattern, word, target) => grade(word, target) == pattern;
 
-const random = () => {
-  return Math.random();
+let x = 0;
+let TODAY = new Date();
+
+const random = (size) => {
+  x += TODAY.getDate();
+  let y = x + TODAY.getFullYear() * 365;
+  y += TODAY.getMonth() * 31;
+  y += TODAY.getDate();
+  return y % size;
 };
 
 const generate = (target) => {
   let words = GOOD_WORDS;
   if (!target) {
-    target = words[Math.floor(random() * words.length)];
+    target = words[random(words.length)];
   }
 
   let knowledge = {
@@ -117,7 +124,7 @@ const generate = (target) => {
     words = possible_words(knowledge, words);
     console.log(words.length, 'possible words');
     // console.log(words.join(', '))
-    guess = words.splice(Math.floor(random() * words.length), 1)[0];
+    guess = words.splice(random(words.length), 1)[0];
     console.log('Guessing:', guess);
     if (!guess) {
       console.log(knowledge);
