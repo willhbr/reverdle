@@ -95,7 +95,7 @@ const word_matches = (pattern, word, target) => grade(word, target) == pattern;
 let x = 0;
 let TODAY = new Date();
 const REVERDLE_NUMBER = Math.floor(
-  (TODAY.getTime() - new Date(2022, 2, 6).getTime()) / (1000 * 60 * 60 * 24));
+  (TODAY.getTime() - new Date(2022, 2, 7).getTime()) / (1000 * 60 * 60 * 24));
 
 const random = (size) => {
   x += TODAY.getDate();
@@ -199,8 +199,7 @@ const finished = (context) => {
     }
   });
 
-  out += 'willhbr.net/reverdle';
-  res.innerHTML = out;
+  res.innerHTML = out + '<a href="https://willhbr.net/reverdle">willhbr.net/reverdle</a>';;
 
   $('#stats').innerHTML = `
   <b>Streak:</b> ${stats.streak}<br>
@@ -209,10 +208,18 @@ const finished = (context) => {
   `;
 
   let share = output.querySelector('button');
-  let share_text = remoji('Rewordle #' + REVERDLE_NUMBER + '\n' + out).replace(/<br>/gi, '\n');
+  let share_text = remoji(
+    'Rewordle #' + REVERDLE_NUMBER + '\n'
+    + out + '\nwillhbr.net/reverdle').replace(/<br>/gi, '\n');
   if (window.isSecureContext) {
     share.onclick = () => {
-      navigator.clipboard.writeText(share_text);
+      try {
+        navigator.clipboard.writeText(share_text);
+        share.innerText = 'Copied';
+        setTimeout(() => { share.innerText = 'Share'; }, 3000);
+      } catch {
+        share.innerText = 'failed';
+      }
     };
   } else {
     console.log(share_text);
