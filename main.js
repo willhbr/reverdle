@@ -62,6 +62,13 @@ const emojify = (pattern) => {
   return res;
 }
 
+const remoji = text => text.replace(/&#x[a-f0-9]+;/gi, r => ({
+  '&#x2b1b;': '⬛',
+  '&#x1f7e8;': '🟨',
+  '&#x1f7e9;': '🟩',
+  '&#x2705;': '✅',
+}[r.toLowerCase()] || r));
+
 const grade = (word, target) => {
   word = word.toLowerCase()
   target = target.toLowerCase()
@@ -202,12 +209,13 @@ const finished = (context) => {
   `;
 
   let share = output.querySelector('button');
+  let share_text = remoji('Rewordle #' + REVERDLE_NUMBER + '\n' + out).replace(/<br>/gi, '\n');
   if (window.isSecureContext) {
     share.onclick = () => {
-      navigator.clipboard.writeText(
-        'Rewordle #' + REVERDLE_NUMBER + '\n' + out);
+      navigator.clipboard.writeText(share_text);
     };
   } else {
+    console.log(share_text);
     share.style.display = 'none';
   }
   output.style.display = 'block';

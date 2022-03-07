@@ -75,6 +75,18 @@ input.bad-word {
   margin-top: 2em;
 }
 
+#results-page button {
+  background: #538d4e;
+  border: none;
+  border-radius: 3px;
+  padding: 1em 2em 1em 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-top: 1em;
+  color: #eee;
+  font-size: 1rem;
+}
+
 footer, footer a {
   margin-top: 20vh;
   color: #aaa !important;
