@@ -38,7 +38,7 @@ const possible_words = (knowledge, words) => words.filter((word) => {
       possible_letter_count += 1;
     }
   }
-  
+
   if (possible_letter_count < knowledge.possible_letters.size) {
     return false;
   }
@@ -69,7 +69,7 @@ const grade = (word, target) => {
   let ones = target;
   for (const i in target) {
     if (word[i] == target[i]) {
-      result += '2'; 
+      result += '2';
     } else {
       let idx = ones.indexOf(word[i]);
       if (idx == -1) {
@@ -87,6 +87,8 @@ const word_matches = (pattern, word, target) => grade(word, target) == pattern;
 
 let x = 0;
 let TODAY = new Date();
+const REVERDLE_NUMBER = Math.floor(
+  (TODAY.getTime() - new Date(2022, 2, 6).getTime()) / (1000 * 60 * 60 * 24));
 
 const random = (size) => {
   x += TODAY.getDate();
@@ -138,18 +140,92 @@ const generate = (target) => {
   });
 };
 
+const record_stats = (context) => {
+  let stats = null;
+  try {
+    stats = JSON.parse(localStorage['stats']);
+  } catch (err) {
+    console.log(err);
+    stats = {
+      streak: 0,
+      last_completed: '',
+      games_completed: 0,
+      longest_streak: 0,
+    };
+  }
+
+  if (stats.last_completed) {
+    if (TODAY.toDateString() == new Date(stats.last_completed).toDateString()) {
+      return stats;
+    }
+  }
+
+  stats.games_completed += 1;
+
+  let yesterday = new Date(TODAY.getTime() - (1000 * 60 * 60 * 24));
+  if (yesterday.toDateString() == new Date(stats.last_completed).toDateString()) {
+    stats.streak += 1;
+  } else {
+    stats.streak = 1;
+  }
+  stats.longest_streak = Math.max(stats.streak, stats.longest_streak);
+  stats.last_completed = TODAY.toDateString();
+
+  localStorage['stats'] = JSON.stringify(stats);
+  return stats;
+};
+
+const finished = (context) => {
+  let stats = record_stats(context);
+  let output = $('#results-page');
+  let res = output.querySelector('#result');
+  let num_field = output.querySelector('#reverdle-num');
+  num_field.innerText = REVERDLE_NUMBER;
+
+  let out = '';
+
+  context.patterns.forEach(pattern => {
+    if (pattern == '22222') {
+      out += context.target.toUpperCase() + '<br>';
+    } else {
+      out += emojify(pattern) + SUCCESS + '<br>';
+    }
+  });
+
+  out += 'willhbr.net/reverdle';
+  res.innerHTML = out;
+
+  $('#stats').innerHTML = `
+  <b>Streak:</b> ${stats.streak}<br>
+  <b>Longest streak:</b> ${stats.longest_streak}<br>
+  <b>Games played:</b> ${stats.games_completed}
+  `;
+
+  let share = output.querySelector('button');
+  if (window.isSecureContext) {
+    share.onclick = () => {
+      navigator.clipboard.writeText(
+        'Rewordle #' + REVERDLE_NUMBER + '\n' + out);
+    };
+  } else {
+    share.style.display = 'none';
+  }
+  output.style.display = 'block';
+};
+
 const check_input = (target, field) => {
   let idx = field.dataset.idx;
   let pattern = field.dataset.pattern;
   let word = field.value.toLowerCase();
   let result_field = $('#result-' + idx);
   localStorage['guess-' + idx] = word;
-  localStorage['guessed-at'] = new Date().toDateString();
+  localStorage['guessed-at'] = TODAY.toDateString();
   if (word.length != 5) {
     result_field.innerHTML = QNS + '&#x2754;';
     return;
   }
   let g = grade(word, target);
+  let success = false;
   if (!is_valid(word)) {
     field.classList.add('bad-word');
     field.classList.remove('correct');
@@ -169,6 +245,7 @@ const check_input = (target, field) => {
     field.classList.add('duplicate');
     result_field.innerHTML = QNS + DUPLICATE;
   } else if (g == pattern) {
+    success = true;
     field.classList.add('correct');
     field.classList.remove('bad-word');
     field.classList.remove('incorrect');
@@ -181,6 +258,8 @@ const check_input = (target, field) => {
     field.classList.remove('duplicate');
     result_field.innerHTML = emojify(g) + FAILURE;
   }
+  field.disabled = success;
+  return success;
 };
 
 const $ = (s) => document.querySelector(s);
@@ -194,13 +273,13 @@ const DUPLICATE = '&#x32;&#xFE0F;&#x20E3;';
 
 const main = () => {
   let table = $('#the-table');
-  let ignore_storage = localStorage['guessed-at'] != new Date().toDateString();
+  let ignore_storage = localStorage['guessed-at'] != TODAY.toDateString();
   let context = null;
   if (!ignore_storage) {
     try {
       context = JSON.parse(localStorage['context']);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   if (!context) {
@@ -219,20 +298,28 @@ const main = () => {
                   data-answer="${answer}"
                   data-idx="${idx}" data-pattern="${pattern}"/></td>`;
       tr += `<td class="result" id="result-${idx}">${QNS}&#x2754;</td>`
-    }   
+    }
     table.innerHTML += tr + '</tr>';
   });
+  let results = new Array(context.patterns.length - 1);
   $$('.guess-field').forEach(field => {
     let idx = field.dataset.idx;
+    results[idx] = false;
     let stored = localStorage['guess-' + idx];
     if (stored && !ignore_storage) {
       field.value = stored;
-      check_input(context.target, field);
+      results[idx] = check_input(context.target, field);
     }
     field.addEventListener('keyup', () => {
-      check_input(context.target, field);
+      results[idx] = check_input(context.target, field);
+      if (results.reduce((a, x) => a && x, true)) {
+        finished(context);
+      }
     });
   });
+  if (results.reduce((a, x) => a && x, true)) {
+    finished(context);
+  }
 };
 
 window.addEventListener('load', main);

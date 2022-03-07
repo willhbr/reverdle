@@ -66,6 +66,15 @@ input.bad-word {
   border-color: orange;
 }
 
+#results-page {
+  padding-top: 2em;
+  text-align: center;
+}
+
+#stats {
+  margin-top: 2em;
+}
+
 footer, footer a {
   margin-top: 20vh;
   color: #aaa !important;
