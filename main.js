@@ -209,7 +209,7 @@ const finished = (context) => {
 
   let share = output.querySelector('button');
   let share_text = remoji(
-    'Rewordle #' + REVERDLE_NUMBER + '\n'
+    'Reverdle #' + REVERDLE_NUMBER + '\n'
     + out + '\nwillhbr.net/reverdle').replace(/<br>/gi, '\n');
   if (window.isSecureContext) {
     share.onclick = () => {
