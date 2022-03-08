@@ -233,10 +233,12 @@ const check_input = (target, field) => {
   let pattern = field.dataset.pattern;
   let word = field.value.toLowerCase();
   let result_field = $('#result-' + idx);
+  let mark_field = $('#mark-' + idx);
   localStorage['guess-' + idx] = word;
   localStorage['guessed-at'] = TODAY.toDateString();
   if (word.length != 5) {
-    result_field.innerHTML = QNS + '&#x2754;';
+    result_field.innerHTML = QNS;
+    mark_field.innerHTML = '&#x2754;';
     return;
   }
   let g = grade(word, target);
@@ -246,32 +248,37 @@ const check_input = (target, field) => {
     field.classList.remove('correct');
     field.classList.remove('incorrect');
     field.classList.remove('duplicate');
-    result_field.innerHTML = QNS + BAD_WORD;
+    result_field.innerHTML = QNS;
+    mark_field.innerHTML = BAD_WORD;
   } else if (Array.from(
     $$('.guess-field')).map(f => f.dataset.idx == idx ? '' : f.value.toLowerCase()).includes(word)) {
     $$('.guess-field').forEach(f => {
       if (f.value == word && f.dataset.idx != idx) {
-        $('#result-' + f.dataset.idx).innerHTML = QNS + DUPLICATE;
+        $('#result-' + f.dataset.idx).innerHTML = QNS;
+        $('#mark-' + f.dataset.idx).innerHTML = DUPLICATE;
       }
     });
     field.classList.remove('correct');
     field.classList.remove('bad-word');
     field.classList.remove('incorrect');
     field.classList.add('duplicate');
-    result_field.innerHTML = QNS + DUPLICATE;
+    result_field.innerHTML = QNS;
+    mark_field.innerHTML = DUPLICATE;
   } else if (g == pattern) {
     success = true;
     field.classList.add('correct');
     field.classList.remove('bad-word');
     field.classList.remove('incorrect');
     field.classList.remove('duplicate');
-    result_field.innerHTML = emojify(g) + SUCCESS;
+    result_field.innerHTML = emojify(g);
+    mark_field.innerHTML = SUCCESS;
   } else {
     field.classList.remove('correct');
     field.classList.remove('bad-word');
     field.classList.add('incorrect');
     field.classList.remove('duplicate');
-    result_field.innerHTML = emojify(g) + FAILURE;
+    result_field.innerHTML = emojify(g);
+    mark_field.innerHTML = FAILURE;
   }
   field.disabled = success;
   return success;
@@ -279,7 +286,7 @@ const check_input = (target, field) => {
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
-const QNS = '&#x2754;&#x2754;&#x2754;&#x2754;&#x2754;';
+const QNS = '&#x2B1C;&#x2B1C;&#x2B1C;&#x2B1C;&#x2B1C;';
 
 const SUCCESS = '&#x2705;';
 const FAILURE = '&#x274C;';
@@ -287,7 +294,7 @@ const BAD_WORD = '&#x1F6AB;';
 const DUPLICATE = '&#x32;&#xFE0F;&#x20E3;';
 
 const main = () => {
-  let table = $('#the-table');
+  let table = $('#game');
   let ignore_storage = localStorage['guessed-at'] != TODAY.toDateString();
   let context = null;
   if (!ignore_storage) {
@@ -302,20 +309,23 @@ const main = () => {
     localStorage['context'] = JSON.stringify(context);
   }
 
+  game.innerHTML = '';
   context.patterns.forEach((pattern, idx, list) => {
     let answer = context.answers[idx];
     let emojis = emojify(pattern);
-    let tr = `<tr><td class="emo">${emojis}</td>`;
+    let row = `<div class="row"><div class="emo">${emojis}</div>`;
     if (idx == list.length - 1) {
-      tr += `<td class="word">${context.target}</td>`;
+      row += `<div class="word">${context.target}</div>`;
     } else {
-      tr += `<td class="input"><input type="text" class="guess-field"
+      row += `<div class="input"><input type="text" class="guess-field"
                   data-answer="${answer}"
-                  data-idx="${idx}" data-pattern="${pattern}"/></td>`;
-      tr += `<td class="result" id="result-${idx}">${QNS}&#x2754;</td>`
+                  data-idx="${idx}" data-pattern="${pattern}"/>
+               <span id="mark-${idx}">&#x2754;</span></div>`;
+      row += `<div class="result" id="result-${idx}">${QNS}</div>`
     }
-    table.innerHTML += tr + '</tr>';
+    game.innerHTML += row + '</div>';
   });
+
   let results = new Array(context.patterns.length - 1);
   $$('.guess-field').forEach(field => {
     let idx = field.dataset.idx;

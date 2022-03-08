@@ -21,36 +21,31 @@ p.subtitle {
   max-width: 500px;
 }
 
-#the-table {
+.row {
   width: 100%;
-  font-size: 20px;
-}
-
-td.emo {
-  text-align: right;
-}
-
-#the-table td {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
   text-transform: uppercase;
+}
+
+.emo, .result {
+  line-height: 0.6em;
+  overflow: hidden;
 }
 
 input {
   background: transparent;
-  border: 1px solid #eee;
-  border-radius: 2px;
-  height: 1.2rem;
+  border: 3px solid #eee;
+  border-radius: 5px;
+  height: 1.2em;
   color: #eee;
   text-align: center;
-  width: 5em !important;
+  width: 4em !important;
   text-transform: uppercase !important;
-}
-
-td.word {
-  text-align: center;
-}
-
-td.input {
-  text-align: center;
+  font-size: 2rem;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 input.correct {
