@@ -72,22 +72,25 @@ const remoji = text => text.replace(/&#x[a-f0-9]+;/gi, r => ({
 const grade = (word, target) => {
   word = word.toLowerCase()
   target = target.toLowerCase()
-  let result = '';
+  let result = [];
   let ones = target;
   for (const i in target) {
     if (word[i] == target[i]) {
-      result += '2';
-    } else {
       let idx = ones.indexOf(word[i]);
-      if (idx == -1) {
-        result += '0';
-      } else {
-        ones = ones.slice(0, idx) + ones.slice(idx + 1);
-        result += '1';
-      }
+      ones = ones.slice(0, idx) + ones.slice(idx + 1);
+      result[i] = '2';
     }
   }
-  return result;
+  for (const i in target) {
+    let idx = ones.indexOf(word[i]);
+    if (idx == -1) {
+      result[i] = result[i] || '0';
+    } else {
+      ones = ones.slice(0, idx) + ones.slice(idx + 1);
+      result[i] = '1';
+    }
+  }
+  return result.join('');
 }
 
 const word_matches = (pattern, word, target) => grade(word, target) == pattern;
